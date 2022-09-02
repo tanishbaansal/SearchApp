@@ -8,24 +8,16 @@ import Button from "@mui/material/Button";
 const SearchBox = () => {
     const [open, setOpen] = React.useState(false);
     const [companies, setCompanies] = useState([]);
+    const [selectedCompany, setSelectedCompany] = useState([]);
 
     const loading = open && companies.length === 0;
-
     React.useEffect(() => {
         let active = true;
-
         if (!loading) {
             return undefined;
         }
-
-        (async () => {
-            // await sleep(1e3); // For demo purposes.
-
-            if (active) {
-                setCompanies([...companies]);
-            }
-        })();
-
+        if (active) {
+        }
         return () => {
             active = false;
         };
@@ -67,10 +59,17 @@ const SearchBox = () => {
     };
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (selectedCompany) {
+            console.log(
+                `This is the select company detail Name : ${selectedCompany.name}, CIN - ${selectedCompany.link}`
+            );
+        }
     };
-    const saveCompany = () => {
-        // event.preventDefault();
-        console.log("wo");
+    const saveCompany = (event, value) => {
+        if (value) {
+            value.link = value.link.split("/")[2];
+            setSelectedCompany(value);
+        }
     };
     return (
         <form noValidate onSubmit={handleSubmit}>
@@ -82,7 +81,11 @@ const SearchBox = () => {
                 onClose={() => {
                     setOpen(false);
                 }}
+                autoHighlight={true}
                 loading={loading}
+                onChange={saveCompany}
+                loadingText="Type company name ..."
+                noOptionsText="No company registered with that name"
                 getOptionLabel={(companies) => companies.name}
                 options={companies}
                 renderInput={(params) => (
@@ -107,12 +110,7 @@ const SearchBox = () => {
                     />
                 )}
             />
-            <Button
-                onClick={saveCompany}
-                type="submit"
-                sx={{ mt: 2 }}
-                variant="contained"
-            >
+            <Button type="submit" sx={{ mt: 2 }} variant="contained">
                 Submit
             </Button>
         </form>
