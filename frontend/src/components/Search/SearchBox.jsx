@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
-
+import { useNavigate } from "react-router-dom";
 const SearchBox = () => {
     const [open, setOpen] = React.useState(false);
     const [companies, setCompanies] = useState([]);
     const [selectedCompany, setSelectedCompany] = useState([]);
-
+    let navigate = useNavigate();
     const loading = open && companies.length === 0;
-    React.useEffect(() => {
+
+    useEffect(() => {
         let active = true;
         if (!loading) {
             return undefined;
@@ -23,7 +24,7 @@ const SearchBox = () => {
         };
     }, [loading]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!open) {
             setCompanies([]);
         }
@@ -57,22 +58,45 @@ const SearchBox = () => {
         }
         setCompanies(companyList);
     };
-    const handleSubmit = (event) => {
+
+    //To handle when the submit button is pressed
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log(selectedCompany);
         if (selectedCompany) {
-            console.log(
-                `This is the select company detail Name : ${selectedCompany.name}, CIN - ${selectedCompany.link}`
+            const saveCompany = await axios.post(
+                `http://localhost:3001/add-company`,
+                {
+                    companyName: selectedCompany.name,
+                    companyCIN: selectedCompany.link,
+                },
+                {
+                    headers: {
+                        "Content-type": "application/json",
+                    },
+                }
             );
+            if (saveCompany.data === "SUCCESS") {
+                console.log("inserted Data redirecting to dashboard");
+            } else {
+                console.log(
+                    `Already Present in list ${JSON.stringify(saveCompany)}`
+                );
+            }
+            navigate("/CompanyList");
         }
     };
+
+    //To set the selected company detail from the dropdown
     const saveCompany = (event, value) => {
         if (value) {
             value.link = value.link.split("/")[2];
+
             setSelectedCompany(value);
         }
     };
     return (
-        <form noValidate onSubmit={handleSubmit}>
+        <>
             <Autocomplete
                 open={open}
                 onOpen={() => {
@@ -110,10 +134,16 @@ const SearchBox = () => {
                     />
                 )}
             />
-            <Button type="submit" sx={{ mt: 2 }} variant="contained">
+            <Button
+                onClick={handleSubmit}
+                type="submit"
+                sx={{ mt: 2, width: "100%" }}
+                size="large"
+                variant="contained"
+            >
                 Submit
             </Button>
-        </form>
+        </>
     );
 };
 
