@@ -62,7 +62,6 @@ const SearchBox = () => {
     //To handle when the submit button is pressed
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(selectedCompany);
         if (selectedCompany) {
             const saveCompany = await axios.post(
                 `http://localhost:3001/add-company`,
@@ -76,11 +75,11 @@ const SearchBox = () => {
                     },
                 }
             );
-            if (saveCompany.data === "SUCCESS") {
-                console.log("inserted Data redirecting to dashboard");
-            } else {
+            if (saveCompany.data != "SUCCESS") {
                 console.log(
-                    `Already Present in list ${JSON.stringify(saveCompany)}`
+                    `Company Already Present in list ${JSON.stringify(
+                        saveCompany
+                    )}`
                 );
             }
             navigate("/CompanyList");

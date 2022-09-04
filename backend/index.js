@@ -33,7 +33,6 @@ app.use(bodyParser.json());
 
 //Get Data From zaubacorp
 app.post("/", async (req, res) => {
-    console.log("Calling Zaubacorp");
     const response = await axios.post(
         `https://www.zaubacorp.com/custom-search/`,
         {
