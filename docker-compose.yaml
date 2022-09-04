@@ -5,8 +5,8 @@ services:
         image: postgres:14.1-alpine
         restart: always
         environment:
-            - POSTGRES_USER=searchapp
-            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_USER=searchApp
+            - POSTGRES_PASSWORD=1YIx9J6N9Vzl
         ports:
             - "5432:5432"
         volumes:
